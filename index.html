@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>socket</title>
+</head>
+<body>
+    <h1>socket com protocolo WS</h1>
+    <div id="status">Conectando...</div>
+    <ul id="messages"></ul>
+
+    <script>
+        const websocketInstance = new WebSocket("ws://192.168.100.6:8080");
+
+        websocketInstance.onopen = () => {
+            document.getElementById("status").innerText = "Conectado!";
+        };
+
+        websocketInstance.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "message") {
+                    const messages = document.getElementById("messages");
+                    const li = document.createElement("li");
+                    li.textContent = `${data.username}: ${data.text}`;
+                    messages.appendChild(li);
+                }
+            } catch (error) {
+                console.error("Erro ao processar mensagem:", error);
+            }
+        };
+
+        websocketInstance.onclose = () => {
+            document.getElementById("status").innerText = "Desconectado!";
+        };
+    </script>
+</body>
+</html>
